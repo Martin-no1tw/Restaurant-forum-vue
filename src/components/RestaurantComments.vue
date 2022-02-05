@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import moment from "moment";
+import { fromNowFilters } from "./../utils/mixins";
 
 const dummyUser = {
   currentUser: {
@@ -39,19 +39,11 @@ const dummyUser = {
 };
 
 export default {
+  mixins: [fromNowFilters],
   data() {
     return {
       currentUser: dummyUser.currentUser,
     };
-  },
-  filters: {
-    fromNow(datetime) {
-      if (!datetime) {
-        return "-";
-      }
-
-      return moment(datetime).fromNow();
-    },
   },
   props: {
     restaurantComments: {
