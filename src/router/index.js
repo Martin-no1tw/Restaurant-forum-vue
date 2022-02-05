@@ -44,6 +44,11 @@ const routes = [
     component: () => import('../views/UsersTop.vue')
   },
   {
+    path: '/restaurants/:id',
+    name: 'restaurant',
+    component: () => import('../views/Restaurant.vue')
+  },
+  {
     path: '*',
     name: 'not-found',
     component: NotFound
