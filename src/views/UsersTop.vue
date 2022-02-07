@@ -11,50 +11,8 @@
 <script>
 import NavTabs from "./../components/NavTabs";
 import UsersTop from "./../components/UsersTop";
-
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: "root",
-      email: "root@example.com",
-      password: "$2a$10$rDvRLt.QeA29/1qCWZXNS.M6MoqFKu25RpRRvV9mClEyJCvKCtiYm",
-      isAdmin: true,
-      image: null,
-      createdAt: "2022-01-30T18:12:28.000Z",
-      updatedAt: "2022-01-30T18:12:28.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 2,
-      name: "user1",
-      email: "user1@example.com",
-      password: "$2a$10$qtSCyHQddj10rkq0O.xNJOSpUxOOexpQ1LScGpyIa21y.P0mvEZm6",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-01-30T18:12:28.000Z",
-      updatedAt: "2022-01-30T18:12:28.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 3,
-      name: "user2",
-      email: "user2@example.com",
-      password: "$2a$10$dqPorTXJkTFIr4Zx5aGLkO8ax0mNWEOIfK48x94ZJmxaSeIpNyDAG",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-01-30T18:12:28.000Z",
-      updatedAt: "2022-01-30T18:12:28.000Z",
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-  ],
-};
+import usersAPI from "./../apis/users";
+import { Toast } from "./../utils/apiHelpers";
 
 export default {
   name: "userstop",
@@ -68,12 +26,27 @@ export default {
     };
   },
   created() {
-    this.fetchUsersTop();
+    this.fetchTopUsers();
   },
   methods: {
-    fetchUsersTop() {
-      const { users } = dummyData;
-      this.users = users;
+    async fetchTopUsers() {
+      try {
+        const { data } = await usersAPI.getTopUsers();
+
+        this.users = data.users.map((user) => ({
+          id: user.id,
+          name: user.name,
+          image: user.image,
+          followerCount: user.FollowerCount,
+          isFollowed: user.isFollowed,
+        }));
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: "無法取得美食達人，請稍後再試",
+        });
+      }
     },
   },
 };
