@@ -6,6 +6,7 @@
       <input
         id="name"
         type="text"
+        v-model="restaurant.name"
         class="form-control"
         name="name"
         placeholder="Enter name"
@@ -15,7 +16,13 @@
 
     <div class="form-group">
       <label for="categoryId">Category</label>
-      <select id="categoryId" class="form-control" name="categoryId" required>
+      <select
+        id="categoryId"
+        class="form-control"
+        name="categoryId"
+        v-model="restaurant.categoryId"
+        required
+      >
         <option
           v-for="category in categories"
           :key="category.id"
@@ -30,6 +37,7 @@
       <label for="tel">Tel</label>
       <input
         id="tel"
+        v-model="restaurant.tel"
         type="text"
         class="form-control"
         name="tel"
@@ -41,6 +49,7 @@
       <label for="address">Address</label>
       <input
         id="address"
+        v-model="restaurant.address"
         type="text"
         class="form-control"
         placeholder="Enter address"
@@ -52,6 +61,7 @@
       <label for="opening-hours">Opening Hours</label>
       <input
         id="opening-hours"
+        v-model="restaurant.opening_hours"
         type="time"
         class="form-control"
         name="opening_hours"
@@ -62,6 +72,7 @@
       <label for="description">Description</label>
       <textarea
         id="description"
+        v-model="restaurant.description"
         class="form-control"
         rows="3"
         name="description"
@@ -85,6 +96,35 @@
 
 
 <script>
+const dummyData = {
+  categories: [
+    {
+      id: 1,
+      name: "中式料理",
+      createdAt: "2019-06-22T09:00:43.000Z",
+      updatedAt: "2019-06-22T09:00:43.000Z",
+    },
+    {
+      id: 2,
+      name: "日本料理",
+      createdAt: "2019-06-22T09:00:43.000Z",
+      updatedAt: "2019-06-22T09:00:43.000Z",
+    },
+    {
+      id: 3,
+      name: "義大利料理",
+      createdAt: "2019-06-22T09:00:43.000Z",
+      updatedAt: "2019-06-22T09:00:43.000Z",
+    },
+    {
+      id: 4,
+      name: "墨西哥料理",
+      createdAt: "2019-06-22T09:00:43.000Z",
+      updatedAt: "2019-06-22T09:00:43.000Z",
+    },
+  ],
+};
+
 export default {
   data() {
     return {
@@ -99,6 +139,14 @@ export default {
       },
       categories: [],
     };
+  },
+  created() {
+    this.fetchCategories();
+  },
+  methods: {
+    fetchCategories() {
+      this.categories = dummyData.categories;
+    },
   },
 };
 </script>
