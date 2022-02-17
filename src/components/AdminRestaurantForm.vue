@@ -1,6 +1,6 @@
 // ./src/components/AdminRestaurantForm.vue
 <template>
-  <form @submit.stop.prevent="handleSubmit">
+  <form v-show="!isLoading" @submit.stop.prevent="handleSubmit">
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -98,40 +98,16 @@
       />
     </div>
 
-    <button type="submit" class="btn btn-primary">送出</button>
+    <button type="submit" class="btn btn-primary" :disabled="isProcessing">
+      {{ isProcessing ? "處理中.." : "送出" }}
+    </button>
   </form>
 </template>
 
 
 <script>
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-  ],
-};
+import adminAPI from "./../apis/admin";
+import { Toast } from "./../utils/apiHelpers";
 
 export default {
   props: {
@@ -147,6 +123,10 @@ export default {
         openingHours: "",
       }),
     },
+    isProcessing: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -161,6 +141,7 @@ export default {
         openingHours: "",
       },
       categories: [],
+      isLoading: true,
     };
   },
   created() {
@@ -171,8 +152,20 @@ export default {
     };
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories;
+    async fetchCategories() {
+      try {
+        // STEP 3: 向伺服器取得餐廳類別清單
+        const { data } = await adminAPI.categories.get();
+        this.categories = data.categories;
+        this.isLoading = false;
+      } catch (error) {
+        this.isLoading = false;
+        // STEP 4: 在 catch 中進行錯誤處理
+        Toast.fire({
+          icon: "error",
+          title: "無法取得餐廳類別，請稍後再試",
+        });
+      }
     },
     handleFileChange(e) {
       const files = e.target.files;
@@ -186,6 +179,20 @@ export default {
       }
     },
     handleSubmit(e) {
+      if (!this.restaurant.name) {
+        Toast.fire({
+          icon: "warning",
+          title: "請填寫餐廳名稱",
+        });
+        return;
+      } else if (!this.restaurant.categoryId) {
+        Toast.fire({
+          icon: "warning",
+          title: "請選擇餐廳類別",
+        });
+        return;
+      }
+
       const form = e.target;
       const formData = new FormData(form);
       this.$emit("after-submit", formData);

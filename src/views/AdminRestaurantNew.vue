@@ -1,56 +1,48 @@
 <template>
   <div class="container py-5">
-    <AdminRestaurantForm @after-submit="handleAfterSubmit" />
+    <AdminRestaurantForm
+      @after-submit="handleAfterSubmit"
+      :is-Processing="isProcessing"
+    />
   </div>
 </template>
 
 <script>
 import AdminRestaurantForm from "./../components/AdminRestaurantForm.vue";
-
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-  ],
-};
+import adminAPI from "./../apis/admin";
+import { Toast } from "./../utils/apiHelpers";
 
 export default {
   components: {
     AdminRestaurantForm,
   },
-  created() {
-    this.fetchCategories();
+  data() {
+    return {
+      isProcessing: false,
+    };
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories;
-    },
-    handleAfterSubmit(formData) {
-      // 透過 API 將表單資料送到伺服器
-      for (let [name, value] of formData.entries()) {
-        console.log(name + ": " + value);
+    async handleAfterSubmit(formData) {
+      try {
+        this.isProcessing = true;
+        // STEP 3: 透過 restaurants.create 方法來向伺服器建立餐廳
+        const { data } = await adminAPI.restaurants.create({
+          formData,
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        // STEP 4: 成功的話則轉址到 `/admin/restaurants`
+        this.$router.push({ name: "admin-restaurants" });
+      } catch (error) {
+        // STEP 5: 錯誤處理
+        this.isProcessing = false;
+        Toast.fire({
+          icon: "error",
+          title: "無法建立餐廳，請稍後再試",
+        });
       }
     },
   },
