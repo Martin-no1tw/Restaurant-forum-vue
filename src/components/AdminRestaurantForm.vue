@@ -151,6 +151,11 @@ export default {
       ...this.initialRestaurant,
     };
   },
+  watch: {
+    initialRestaurant(newValue) {
+      this.restaurant = { ...this.restaurant, ...newValue };
+    },
+  },
   methods: {
     async fetchCategories() {
       try {
