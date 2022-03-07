@@ -35,6 +35,7 @@
           <button
             type="button"
             class="btn btn-sm btn-outline-success my-2 my-sm-0"
+            @click="logout"
           >
             登出
           </button>
@@ -49,43 +50,17 @@
 <script>
 import { mapState } from "vuex";
 
-// const dummyUser = {
-//   currentUser: {
-//     id: 1,
-//     name: "管理者",
-//     email: "root@example.com",
-//     image: "https://i.pravatar.cc/300",
-//     isAdmin: true,
-//   },
-//   isAuthenticated: true,
-// };
-
 export default {
   computed: { ...mapState(["currentUser", "isAuthenticated"]) },
-  //   // Vue 會在沒有資料時使用此預設值
-  //   data() {
-  //     return {
-  //       currentUser: {
-  //         id: -1,
-  //         name: "",
-  //         email: "",
-  //         image: "",
-  //         isAdmin: false,
-  //       },
-  //       isAuthenticated: false,
-  //     };
-  //   },
-  //   created() {
-  //     this.fetchUser();
-  //   },
-  //   methods: {
-  //     fetchUser() {
-  //       this.currentUser = {
-  //         ...this.currentUser,
-  //         ...dummyUser.currentUser,
-  //       };
-  //       this.isAuthenticated = dummyUser.isAuthenticated;
-  //     },
-  //   },
+  // Vue 會在沒有資料時使用此預設值
+  created() {
+    this.fetchUser();
+  },
+  methods: {
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push("/signin");
+    },
+  },
 };
 </script>
