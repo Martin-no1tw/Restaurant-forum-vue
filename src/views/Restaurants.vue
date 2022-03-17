@@ -24,6 +24,9 @@
       :previous-page="previousPage"
       :next-page="nextPage"
     />
+
+    <div v-if="restaurants.length < 1"></div>
+    此分類無餐廳資料。
   </div>
 </template>
 
