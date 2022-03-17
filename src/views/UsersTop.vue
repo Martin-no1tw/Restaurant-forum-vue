@@ -1,6 +1,7 @@
 <template>
   <div class="container py-5">
     <NavTabs />
+    <spinner v-if="isLoading" />
     <h1 class="mt-5">美食達人</h1>
     <hr />
     <div class="row text-center">
@@ -39,17 +40,22 @@
 import NavTabs from "./../components/NavTabs.vue";
 import usersAPI from "./../apis/users";
 import { Toast } from "../utils/apiHelpers";
+import Spinner from "../components/Spinner.vue";
+
 export default {
   components: {
     NavTabs,
+    Spinner,
   },
   data() {
     return {
       users: [],
+      isLoading: true,
     };
   },
   created() {
     this.fetchTopUsers();
+    this.isLoading = true;
   },
   methods: {
     async fetchTopUsers() {
@@ -58,7 +64,9 @@ export default {
         const { users } = response.data;
         console.log("user", users);
         this.users = users;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法取得美食達人，請稍後再試",
@@ -96,6 +104,7 @@ export default {
         if (data.status !== "success") {
           throw new Error(data.message);
         }
+
         this.users = this.users.map((user) => {
           if (user.id !== userId) {
             return user;
