@@ -2,6 +2,7 @@
 <template>
   <div class="container py-5">
     <NavTabs />
+    <spinner v-if="isLoading" />
     <h1 class="mt-5">人氣餐廳</h1>
 
     <hr />
@@ -63,15 +64,18 @@
 import NavTabs from "./../components/NavTabs";
 import RestaurantTopAPI from "./../apis/getTopRestaurants";
 import { Toast } from "./../utils/apiHelpers";
+import Spinner from "./../components/Spinner";
 
 export default {
   name: "restaurantTopCard",
   components: {
     NavTabs,
+    Spinner,
   },
   data() {
     return {
       restaurants: [],
+      isLoading: true,
     };
   },
   created() {
@@ -84,7 +88,9 @@ export default {
 
         const { restaurants } = response.data;
         this.restaurants = restaurants;
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法取的卡片資訊",

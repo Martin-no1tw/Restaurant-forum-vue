@@ -2,6 +2,7 @@
 <template>
   <div class="container py-5">
     <NavTabs />
+    <spinner v-if="isLoading" />
     <h1 class="mt-5">最新動態</h1>
     <hr />
     <div class="row">
@@ -26,6 +27,7 @@ import NavTabs from "./../components/NavTabs";
 import NewestRestaurants from "./../components/NewestRestaurants";
 import NewestComments from "./../components/NewestComments";
 import RestaurantFeedsAPI from "./../apis/restaurants";
+import Spinner from "./../components/Spinner";
 import { Toast } from "./../utils/apiHelpers";
 
 export default {
@@ -34,11 +36,13 @@ export default {
     NavTabs,
     NewestRestaurants,
     NewestComments,
+    Spinner,
   },
   data() {
     return {
       restaurants: [],
       comments: [],
+      isLoading: true,
     };
   },
   created() {
@@ -55,10 +59,12 @@ export default {
         console.log(response);
         this.restaurants = restaurants;
         this.comments = comments.filter((comment) => comment.Restaurant);
+        this.isLoading = false;
         Toast.fire({
           title: "串接ok",
         });
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法取的最新資料",
