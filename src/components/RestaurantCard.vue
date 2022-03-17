@@ -28,6 +28,7 @@
           v-if="restaurant.isFavorited"
           type="button"
           class="btn btn-danger btn-border favorite mr-2"
+          :disabled="isProcessing"
           @click.stop.prevent="deleteFavorite(restaurant.id)"
         >
           移除最愛
@@ -36,6 +37,7 @@
           v-else
           type="button"
           class="btn btn-primary btn-border favorite mr-2"
+          :disabled="isProcessing"
           @click.stop.prevent="addFavorite(restaurant.id)"
         >
           加到最愛
@@ -44,6 +46,7 @@
           v-if="restaurant.isLiked"
           type="button"
           class="btn btn-danger like mr-2"
+          :disabled="isProcessing"
           @click.stop.prevent="deleteLike(restaurant.id)"
         >
           Unlike
@@ -52,6 +55,7 @@
           v-else
           type="button"
           class="btn btn-primary like mr-2"
+          :disabled="isProcessing"
           @click.stop.prevent="addLike(restaurant.id)"
         >
           Like
@@ -75,6 +79,7 @@ export default {
   data() {
     return {
       restaurant: this.initialRestaurant,
+      isProcessing: true,
     };
   },
   methods: {
@@ -94,9 +99,10 @@ export default {
           ...this.restaurant,
           isFavorited: true,
         };
+        this.isProcessing = false;
       } catch (error) {
         // STEP 6: 請求失敗的話則跳出錯誤提示
-
+        this.isProcessing = false;
         Toast.fire({
           icon: "error",
           title: "無法將餐廳加入最愛，請稍後再試",
